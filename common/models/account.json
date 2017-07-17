@@ -1,0 +1,50 @@
+{
+  "name": "Account",
+  "plural": "Accounts",
+  "base": "User",
+  "idInjection": false,
+  "options": {
+    "validateUpsert": true,
+    "mongodb": {
+      "collection": "accounts"
+    }
+  },
+  "forceId": true,
+  "mixins": {
+    "MongoDocument": {},
+    "Audit": {}
+  },
+  "properties": {},
+  "validations": [],
+  "relations": {
+    "assignments": {
+      "type": "hasMany",
+      "model": "Assignment",
+      "foreignKey": "accountId"
+    },
+    "profile": {
+      "type": "hasOne",
+      "model": "Profile",
+      "foreignKey": "accountId"
+    },
+    "identities": {
+      "type": "hasMany",
+      "model": "AccountIdentity",
+      "foreignKey": "accountId"
+    },
+    "credentials": {
+      "type": "hasMany",
+      "model": "AccountCredential",
+      "foreignKey": "accountId"
+    }
+  },
+  "acls": [
+    {
+      "accessType": "*",
+      "principalType": "ROLE",
+      "principalId": "$authenticated",
+      "permission": "ALLOW"
+    }
+  ],
+  "methods": {}
+}

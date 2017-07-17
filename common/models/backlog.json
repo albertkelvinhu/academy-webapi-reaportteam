@@ -1,0 +1,55 @@
+{
+  "name": "Backlog",
+  "plural": "Backlogs",
+  "base": "BaseModel",
+  "idInjection": false,
+  "options": {
+    "validateUpsert": true,
+    "mongodb": {
+      "collection": "backlogs"
+    }
+  },
+  "forceId": true,
+  "properties": {
+    "code": {
+      "type": "string"
+    },
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "string",
+      "default": ""
+    },
+    "date": {
+      "type": "date",
+      "required": true,
+      "default": "$now"
+    },
+    "remark": {
+      "type": "string",
+      "default": ""
+    },
+    "status": {
+      "type": "string",
+      "required": true,
+      "default": ""
+    }
+  },
+  "validations": [],
+  "relations": {
+    "project": {
+      "type": "belongsTo",
+      "model": "Project",
+      "foreignKey": "projectId"
+    },
+    "tasks": {
+      "type": "hasMany",
+      "model": "Task",
+      "foreignKey": "backlogId"
+    }
+  },
+  "acls": [],
+  "methods": {}
+}

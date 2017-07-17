@@ -1,0 +1,49 @@
+{
+  "name": "Iteration",
+  "plural": "iterations",
+  "base": "BaseModel",
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true,
+    "mongodb": {
+      "collection": "iterations"
+    }
+  },
+  "properties": {
+    "no": {
+      "type": "number",
+      "required": true
+    },
+    "start": {
+      "type": "date",
+      "required": true,
+      "default": "$now"
+    },
+    "end": {
+      "type": "date",
+      "required": true,
+      "default": "$now"
+    },
+    "remark": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string"
+    }
+  },
+  "validations": [],
+  "relations": {
+    "assignments": {
+      "type": "hasMany",
+      "model": "Assignment",
+      "foreignKey": "iterationId"
+    },
+    "project": {
+      "type": "belongsTo",
+      "model": "Project",
+      "foreignKey": "projectId"
+    }
+  },
+  "acls": [],
+  "methods": {}
+}

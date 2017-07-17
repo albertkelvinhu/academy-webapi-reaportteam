@@ -1,0 +1,40 @@
+{
+  "name": "Profile",
+  "plural": "profiles",
+  "base": "BaseModel",
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true,
+    "mongodb": {
+      "collection": "profile"
+    }
+  },
+  "properties": {
+    "firstname": {
+      "type": "string",
+      "required": true
+    },
+    "lastname": {
+      "type": "string"
+    },
+    "dob": {
+      "type": "date",
+      "required": true
+    },
+    "gender": {
+      "type": "string",
+      "required": true,
+      "default": "male"
+    }
+  },
+  "validations": [],
+  "relations": {
+    "account": {
+      "type": "hasOne",
+      "model": "Account",
+      "foreignKey": "accountId"
+    }
+  },
+  "acls": [],
+  "methods": {}
+}

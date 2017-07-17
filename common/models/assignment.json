@@ -1,0 +1,56 @@
+{
+  "name": "Assignment",
+  "plural": "Assignments",
+  "base": "BaseModel",
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "date": {
+      "type": "date",
+      "required": true
+    },
+    "remark": {
+      "type": "string"
+    },
+    "budget": {
+      "type": "number",
+      "required": true,
+      "default": 0
+    },
+    "elapsed": {
+      "type": "number",
+      "required": true,
+      "default": 0
+    },
+    "status": {
+      "type": "string"
+    }
+  },
+  "validations": [],
+  "relations": {
+    "account": {
+      "type": "belongsTo",
+      "model": "Account",
+      "foreignKey": "accountId"
+    },
+    "task": {
+      "type": "belongsTo",
+      "model": "Task",
+      "foreignKey": "taskId"
+    },
+    "iteration": {
+      "type": "belongsTo",
+      "model": "Iteration",
+      "foreignKey": "iterationId"
+    },
+    "timerecords": {
+      "type": "hasMany",
+      "model": "Timerecord",
+      "foreignKey": "assignmentId"
+    }
+  },
+  "acls": [],
+  "methods": {}
+}

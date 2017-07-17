@@ -1,0 +1,80 @@
+{
+  "name": "Task",
+  "plural": "Tasks",
+  "base": "BaseModel",
+  "idInjection": false,
+  "options": {
+    "validateUpsert": true,
+    "mongodb": {
+      "collection": "tasks"
+    }
+  },
+  "forceId": true,
+  "properties": {
+    "type": {
+      "type": "string",
+      "required": true
+    },
+    "code": {
+      "type": "string",
+      "required": true
+    },
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "string"
+    },
+    "date": {
+      "type": "date",
+      "required": true,
+      "default": "$now"
+    },
+    "budget": {
+      "type": "number",
+      "required": true,
+      "default": 0
+    },
+    "actual": {
+      "type": "number",
+      "required": true,
+      "default": 0
+    },
+    "open": {
+      "type": "date",
+      "default": "$now"
+    },
+    "close": {
+      "type": "date"
+    },
+    "status": {
+      "type": "string",
+      "default": ""
+    },
+    "remark": {
+      "type": "string",
+      "default": ""
+    }
+  },
+  "validations": [],
+  "relations": {
+    "backlog": {
+      "type": "belongsTo",
+      "model": "Backlog",
+      "foreignKey": "backlogId"
+    },
+    "project": {
+      "type": "belongsTo",
+      "model": "Project",
+      "foreignKey": "projectId"
+    },
+    "assignments": {
+      "type": "hasMany",
+      "model": "Assignment",
+      "foreignKey": "taskId"
+    }
+  },
+  "acls": [],
+  "methods": {}
+}

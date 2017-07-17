@@ -1,0 +1,95 @@
+{
+  "_meta": {
+    "sources": [
+      "loopback/common/models",
+      "loopback/server/models",
+      "loopback-component-passport/lib/models",
+      "../common/models",
+      "./models"
+    ],
+    "mixins": [
+      "loopback/common/mixins",
+      "loopback/server/mixins",
+      "../common/mixins",
+      "./mixins"
+    ]
+  },
+  "Account": {
+    "dataSource": "mongodb-ds",
+    "public": true,
+    "options": {
+      "emailVerificationRequired": true
+    }
+  },
+  "AccountIdentity": {
+    "dataSource": "mongodb-ds",
+    "public": false
+  },
+  "AccountCredential": {
+    "dataSource": "mongodb-ds",
+    "public": false
+  },
+  "AccessToken": {
+    "dataSource": "mongodb-ds",
+    "public": false,
+    "relations": {
+      "user": {
+        "type": "belongsTo",
+        "model": "Account",
+        "foreignKey": "userId"
+      }
+    }
+  },
+  "ACL": {
+    "dataSource": "mongodb-ds",
+    "public": false
+  },
+  "RoleMapping": {
+    "dataSource": "mongodb-ds",
+    "public": false
+  },
+  "Role": {
+    "dataSource": "mongodb-ds",
+    "public": false
+  },
+  "BaseModel": {
+    "dataSource": null,
+    "public": false
+  },
+  "Project": {
+    "dataSource": "mongodb-ds",
+    "public": true
+  },
+  "Backlog": {
+    "dataSource": "mongodb-ds",
+    "public": true
+  },
+  "Task": {
+    "dataSource": "mongodb-ds",
+    "public": true
+  },
+  "Assignment": {
+    "dataSource": "mongodb-ds",
+    "public": true
+  },
+  "Profile": {
+    "dataSource": "mongodb-ds",
+    "public": true
+  },
+  "Iteration": {
+    "dataSource": "mongodb-ds",
+    "public": true
+  },
+  "Timerecord": {
+    "dataSource": "mongodb-ds",
+    "public": true
+  },
+  "Me": {
+    "dataSource": null,
+    "public": true
+  },
+  "report": {
+    "dataSource": "db",
+    "public": true
+  }
+}
