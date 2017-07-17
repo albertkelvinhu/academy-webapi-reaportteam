@@ -225,6 +225,5 @@ Account.countEfficiencyPerDate = function (id,date,cb){
   })
 
 
-
 };
 
