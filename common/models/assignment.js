@@ -4,7 +4,7 @@ var app = require('../../server/server');
 module.exports = function(Assignment) {
 
     Assignment.countAssignment = function (accountId,cb){
-    app.models.Assignment.count({where: {and: [{accountId: id}]}},function(err, count){
+    app.models.Assignment.count({where: {and: [{accountId: accountId}]}},function(err, count){
       if(err || id === 0)
          return cb(err);
       else {
