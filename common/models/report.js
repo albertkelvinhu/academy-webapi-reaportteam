@@ -52,25 +52,25 @@ module.exports = function(Report) {
   })
 
 
-  Report.getAccountProject = function(account_id,cb){
-        app.models.Task.count({where: {accountId: account_id}},function(err, Tasks){
-        if(err || account_id === 0)
-            return cb(err);
-        else {
-            console.log(projects);
-            cb(null, projects);
-        }
-        })
-    };
+//   Report.getAccountTasks = function(account_id,cb){
+//         app.models.Task.find({where: {AssignmentaccountId: account_id}},function(err, Tasks){
+//         if(err || account_id === 0)
+//             return cb(err);
+//         else {
+//             console.log(projects);
+//             cb(null, projects);
+//         }
+//         })
+//     };
 
 
-  Report.remoteMethod("getAccountProject",
-    {
-        accepts: [{ arg: 'accountId', type: 'string'}],
-        http: { path:"/:account_id/projects", verb: "get", errorStatus: 401,},
-        description: ["Get projects every Account"],
-        returns: {arg: "Tasks", type: "array"}
-  })
+//   Report.remoteMethod("getAccountTasks",
+//     {
+//         accepts: [{ arg: 'accountId', type: 'string'}],
+//         http: { path:"/:account_id/projects", verb: "get", errorStatus: 401,},
+//         description: ["Get projects every Account"],
+//         returns: {arg: "Tasks", type: "array"}
+//   })
 
 };
 
