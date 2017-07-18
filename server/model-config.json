@@ -88,8 +88,8 @@
     "dataSource": null,
     "public": true
   },
-  "report": {
-    "dataSource": "db",
+  "Report": {
+    "dataSource": null,
     "public": true
   }
 }

@@ -1,5 +1,5 @@
 {
-  "name": "report",
+  "name": "Report",
   "base": "Model",
   "idInjection": true,
   "options": {

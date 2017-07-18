@@ -21,4 +21,5 @@ module.exports = function(Assignment) {
         description: ["Get number of assignments every Account"],
         returns: {arg: "count", type: "number"}
   })
+
 };
