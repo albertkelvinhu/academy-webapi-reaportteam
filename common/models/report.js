@@ -102,7 +102,7 @@ module.exports = function(Report) {
     {
         accepts: [{ arg: 'user_id', type: 'string'}],
         http: { path:"/:user_id/project", verb: "get", errorStatus: 401,},
-        description: ["Get project which an account is involved in."],
+        description: ["Count project(s) which an account is involved in."],
         returns: {arg: "Project", type: "array"}
     })
 
