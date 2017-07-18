@@ -215,7 +215,15 @@ Account.countEfficiencyPerDate = function (id,date,cb){
     })
   };
 
-  
+  Account.remoteMethod("countEfficiencyPerDate",
+    {
+        accepts: [{ arg: 'id', type: 'string'},
+        { arg: 'date', type: 'date'}],
+        http: { path:"/:id/count/efficiency/:date", verb: "get", errorStatus: 401,},
+        description: ["Get efficiency every Account per Date"],
+        returns: {arg: "Assignment", type: "array"}
+  })
+
 
 };
 
