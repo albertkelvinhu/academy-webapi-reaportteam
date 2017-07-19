@@ -77,19 +77,19 @@ module.exports = function(Report) {
         returns: {arg: "Project", type: "array"}
     })
 
-    Report.getProjectbyUser = function(user_id,cb){
+    Report.getProjectbyUser = function(account_id,cb){
         app.models.Project.find({
            include:{
                 relation: 'tasks', // include the owner object
                 scope: { // further filter the owner object
-                    relation: 'assignment', // include the owner object
+                    relation: 'assignments', // include the owner object
                     scope: { // further filter the owner object
-                        where: {accountId: user_id}
+                        where: {accountId: account_id}
                     }
                 }
            }
         },function(err, project){
-        if(err || user_id === 0)
+        if(err || account_id === 0)
             return cb(err);
         else {
             console.log(project);
@@ -100,40 +100,30 @@ module.exports = function(Report) {
 
     Report.remoteMethod("getProjectbyUser",
     {
-        accepts: [{ arg: 'user_id', type: 'string'}],
-        http: { path:"/:user_id/project", verb: "get", errorStatus: 401,},
+        accepts: [{ arg: 'account_id', type: 'string'}],
+        http: { path:"/:account_id/project", verb: "get", errorStatus: 401,},
         description: ["Count project(s) which an account is involved in."],
         returns: {arg: "Project", type: "array"}
     })
 
-    // Report.countProjectbyUser = function(user_id,cb){
-    //     app.models.Project.find({
-    //        include:{
-    //             relation: 'tasks', // include the owner object
-    //             scope: { // further filter the owner object
-    //                 relation: 'assignment', // include the owner object
-    //                 scope: { // further filter the owner object
-    //                     where: {accountId: user_id}
-    //                 }
-    //             }
-    //        }
-    //     },function(err, count){
-    //     if(err || user_id === 0)
-    //         return cb(err);
-    //     else {
-    //         console.log(count);
-    //         cb(null, count);
-    //     }
-    //     }) 
-    // };
+    Report.countProjectbyUser = function(account_id,cb){
+        app.models.Assignment.count({accountId: account_id},function(err, count){
+        if(err || account_id === 0)
+            return cb(err);
+        else {
+            console.log(count);
+            cb(null, count);
+        }
+        }) 
+    };
 
-    // Report.remoteMethod("countProjectbyUser",
-    // {
-    //     accepts: [{ arg: 'user_id', type: 'string'}],
-    //     http: { path:"/:user_id/project", verb: "get", errorStatus: 401,},
-    //     description: ["Get project which an account is involved in."],
-    //     returns: {arg: "count", type: "number"}
-    // })
+    Report.remoteMethod("countProjectbyUser",
+    {
+        accepts: [{ arg: 'account_id', type: 'string'}],
+        http: { path:"/count/:account_id/assignments", verb: "get", errorStatus: 401,},
+        description: ["Count an account's assignments."],
+        returns: {arg: "count", type: "number"}
+    })
 
 
 //   Report.getAccountTasks = function(account_id,cb){
