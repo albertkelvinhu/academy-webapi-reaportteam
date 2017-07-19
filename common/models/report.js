@@ -126,11 +126,12 @@ module.exports = function(Report) {
     })
 
     Report.getElapsedbyUser = function(account_id,cb){
-        app.models.Assignment.find({where: {and: [{accountId: account_id}]}},function(err, assignments){
+        app.models.Assignment.find({where: {accountId: account_id}},function(err, assignments){
         if(err || account_id === 0)
             return cb(err);
         else {
             console.log(assignments);
+
             var sum = assignments.reduce(function(last, d) {return d.elapsed + last;}, 0);
             cb(null, sum);
         }
@@ -144,6 +145,54 @@ module.exports = function(Report) {
         description: ["an account's elapsed time."],
         returns: {arg: "total", type: "decimal"}
     })
+
+
+    Report.getElapsedbyUserInProject = function(account_id,project_id,cb){
+        app.models.Assignment.find({where: {and: [{accountId: account_id},{projectId: project_id}]}},function(err, assignments){
+        if(err || account_id === 0)
+            return cb(err);
+        else {
+            console.log(assignments);
+
+            var sum = assignments.reduce(function(last, d) {return d.elapsed + last;}, 0);
+            cb(null, sum);
+        }
+        }) 
+    };
+
+    Report.remoteMethod("getElapsedbyUserInProject",
+    {
+        accepts: [{ arg: 'project_id', type: 'string'},{ arg: 'account_id', type: 'string'}],
+        http: { path:"/project/:project_id/account/:account_id/total/elapsed/assigments", verb: "get", errorStatus: 401,},
+        description: ["an account's elapsed time for every project."],
+        returns: {arg: "total", type: "decimal"}
+    })
+
+    Report.getElapsedbyUserInProject = function(account_id,project_id,cb){
+        app.models.Assignment.find({where: {and: [{accountId: account_id},{projectId: project_id}]}},function(err, assignments){
+        if(err || account_id === 0)
+            return cb(err);
+        else {
+            console.log(assignments);
+
+            var sum = assignments.reduce(function(last, d) {return d.elapsed + last;}, 0);
+            cb(null, sum);
+        }
+        }) 
+    };
+
+    Report.remoteMethod("getElapsedbyUserInProject",
+    {
+        accepts: [{ arg: 'project_id', type: 'string'},{ arg: 'account_id', type: 'string'}],
+        http: { path:"/project/:project_id/account/:account_id/total/elapsed/assigments", verb: "get", errorStatus: 401,},
+        description: ["an account's elapsed time for every project."],
+        returns: {arg: "total", type: "decimal"}
+    })
+
+    
+
+
+
 
 
 
