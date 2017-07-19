@@ -106,8 +106,8 @@ module.exports = function(Report) {
         returns: {arg: "Project", type: "array"}
     })
 
-    Report.countProjectbyUser = function(account_id,cb){
-        app.models.Assignment.count({accountId: account_id},function(err, count){
+    Report.countClosedAccountbyUser = function(account_id,cb){
+        app.models.Assignment.count({accountId: account_id,status: "closed"},function(err, count){
         if(err || account_id === 0)
             return cb(err);
         else {
@@ -117,13 +117,34 @@ module.exports = function(Report) {
         }) 
     };
 
-    Report.remoteMethod("countProjectbyUser",
+    Report.remoteMethod("countClosedAccountbyUser",
     {
         accepts: [{ arg: 'account_id', type: 'string'}],
-        http: { path:"/count/:account_id/assignments", verb: "get", errorStatus: 401,},
-        description: ["Count an account's assignments."],
+        http: { path:"/:account_id/count/closed/assigments", verb: "get", errorStatus: 401,},
+        description: ["Count an account's closed assignments."],
         returns: {arg: "count", type: "number"}
     })
+
+    Report.getElapsedbyUser = function(account_id,cb){
+        app.models.Assignment.find({where: {and: [{accountId: account_id}]}},function(err, assignments){
+        if(err || account_id === 0)
+            return cb(err);
+        else {
+            console.log(assignments);
+            var sum = assignments.reduce(function(last, d) {return d.elapsed + last;}, 0);
+            cb(null, sum);
+        }
+        }) 
+    };
+
+    Report.remoteMethod("getElapsedbyUser",
+    {
+        accepts: [{ arg: 'account_id', type: 'string'}],
+        http: { path:"/:account_id/total/elapsed/assigments", verb: "get", errorStatus: 401,},
+        description: ["an account's elapsed time."],
+        returns: {arg: "total", type: "decimal"}
+    })
+
 
 
 //   Report.getAccountTasks = function(account_id,cb){
