@@ -148,16 +148,19 @@ module.exports = function(Report) {
         returns: {arg: "total", type: "decimal"}
     })
 
-//belum pasti
+
     Report.getElapsedbyUserInProject = function(account_id,project_id,cb){
         app.models.Assignment.find({where: {and: [{accountId: account_id},{projectId: project_id}]}},function(err, assignments){
         if(err || account_id === 0)
             return cb(err);
         else {
-            console.log(assignments);
-            var sum = assignments.reduce(function(last, d) {
-                return d.elapsed + last;}, 0);
-            cb(null, sum);
+            var sumElapsed = assignments.reduce(function(last, d) {
+                if (d.projectId===project_id){
+                    console.log(d.projectId)
+                    return d.elapsed + last;
+                }
+            }, 0);
+            cb(null, sumElapsed);
         }
         }) 
     };
@@ -169,7 +172,6 @@ module.exports = function(Report) {
         description: ["an account's elapsed time for every project."],
         returns: {arg: "total", type: "decimal"}
     })
-//belum pasti  
 
     Report.getEfficiencybyUserInProject = function(project_id,account_id,cb){
         app.models.Assignment.find({where: {accountId: account_id}},function(err, assignments){
