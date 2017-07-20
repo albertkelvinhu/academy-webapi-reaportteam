@@ -125,6 +125,7 @@ module.exports = function(Report) {
         returns: {arg: "count", type: "number"}
     })
 
+
     Report.getElapsedbyUser = function(account_id,cb){
         app.models.Assignment.find({where: {accountId: account_id}},function(err, assignments){
         if(err || account_id === 0)
@@ -142,8 +143,8 @@ module.exports = function(Report) {
     Report.remoteMethod("getElapsedbyUser",
     {
         accepts: [{ arg: 'account_id', type: 'string'}],
-        http: { path:"/:account_id/total/elapsed/assigments", verb: "get", errorStatus: 401,},
-        description: ["an account's elapsed time."],
+        http: { path:"/:account_id/elapsed/assigments", verb: "get", errorStatus: 401,},
+        description: ["an account's all assignment elapsed time."],
         returns: {arg: "total", type: "decimal"}
     })
 
@@ -154,7 +155,8 @@ module.exports = function(Report) {
             return cb(err);
         else {
             console.log(assignments);
-            var sum = assignments.reduce(function(last, d) {return d.elapsed + last;}, 0);
+            var sum = assignments.reduce(function(last, d) {
+                return d.elapsed + last;}, 0);
             cb(null, sum);
         }
         }) 
@@ -163,11 +165,12 @@ module.exports = function(Report) {
     Report.remoteMethod("getElapsedbyUserInProject",
     {
         accepts: [{ arg: 'project_id', type: 'string'},{ arg: 'account_id', type: 'string'}],
-        http: { path:"/project/:project_id/account/:account_id/total/elapsed/assigments", verb: "get", errorStatus: 401,},
+        http: { path:"/project/:project_id/account/:account_id/elapsed", verb: "get", errorStatus: 401,},
         description: ["an account's elapsed time for every project."],
         returns: {arg: "total", type: "decimal"}
     })
 //belum pasti  
+
     Report.getEfficiencybyUserInProject = function(project_id,account_id,cb){
         app.models.Assignment.find({where: {accountId: account_id}},function(err, assignments){
         if(err || account_id === 0)
@@ -176,17 +179,19 @@ module.exports = function(Report) {
             console.log(assignments)
             
             var sumElapsed = assignments.reduce(function(last, d) {
-                if (d.projectId===project_id)
-                console.log(d.projectId)
-                return 0;
-            
+                if (d.projectId===project_id){
+                    console.log(d.projectId)
+                    return d.elapsed + last;
+                }
             }, 0);
-            // var sumBudget = assignments.reduce(function(last, d) {
-            //     return d.elapsed + last;
-            
-            // }, 0);
-            // var efficiency = (sumElapsed/sumBudget)*100 ;
-            cb(null, sumElapsed);
+            var sumBudget = assignments.reduce(function(last, d) {
+                if (d.projectId===project_id){
+                    console.log(d.projectId)
+                    return d.budget + last;
+                }
+            }, 0);
+            var efficiency = (sumElapsed/sumBudget)*100 ;
+            cb(null, efficiency);
         }
         }) 
     };
@@ -195,7 +200,7 @@ module.exports = function(Report) {
     {
         accepts: [{ arg: 'project_id', type: 'string'},{ arg: 'account_id', type: 'string'}],
         http: { path:"/project/:project_id/account/:account_id/efficiency/", verb: "get", errorStatus: 401,},
-        description: ["an account's elapsed time for every project."],
+        description: ["an account's efficiency for every project."],
         returns: {arg: "efficiency", type: "decimal"}
     })
 
