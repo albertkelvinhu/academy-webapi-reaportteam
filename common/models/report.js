@@ -35,20 +35,18 @@ module.exports = function(Report) {
     Report.getAssignmentsIncludeTask = function(account_id,cb){
         app.models.Assignment.find(
             {
+                where:
+                {
+                accountId: account_id
+            },
             include:{
-                relation: 'task', // include the owner object
-                scope: { // further filter the owner object
-                    relation: 'assignments', // include the owner object
-                    scope: { // further filter the owner object
-                        where: {accountId: account_id}
-                    }
-                }
+                relation: 'task'
             }
            },function(err, assignments){
         if(err || account_id === 0)
             return cb(err);
         else {
-            console.log(assignments);
+            console.log("dipanggil loh assignmnentsnya");
             cb(null, assignments);
         }
         })
@@ -60,7 +58,7 @@ module.exports = function(Report) {
             accepts: [{ arg: 'accountId', type: 'string'}],
             http: { path:"/account/:account_id/assignments/", verb: "get", errorStatus: 401,},
             description: ["Mengambil assignments termasuk task setiap akun"],
-            returns: {arg: "Assignments", type: "array"}
+            returns: {arg: "Assignments", type: "object"}
     })
     
     Report.countAssignment = function(account_id,cb){
