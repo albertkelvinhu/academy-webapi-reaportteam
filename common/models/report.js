@@ -207,19 +207,23 @@ module.exports = function(Report) {
     })
 
     Report.getEfficiencyPerDate = function(account_id,date,cb){
-        app.models.Assignment.find({where: {accountId: account_id}},function(err, assignments){
+        var date_ = new Date(date);
+        date_.setHours(0,0,0,0);
+        app.models.Assignment.find({where:{accountId: account_id}},function(err, assignments){
         if(err || account_id === 0)
             return cb(err);
         else {
             console.log(assignments)
             var sumElapsed = assignments.reduce(function(last, d) {
-                if (d.projectId===project_id){
+                d.date.setHours(0,0,0,0);
+                if (d.date===date_){
                     console.log(d.projectId)
                     return d.elapsed + last;
                 }
             }, 0);
             var sumBudget = assignments.reduce(function(last, d) {
-                if (d.projectId===project_id){
+                d.date.setHours(0,0,0,0);
+                if (d.date===date_){
                     console.log(d.projectId)
                     return d.budget + last;
                 }
@@ -230,10 +234,10 @@ module.exports = function(Report) {
         }) 
     };
 
-    Report.remoteMethod("getEfficiencybyUserInProject",
+    Report.remoteMethod("getEfficiencyPerDate",
     {
-        accepts: [{ arg: 'account_id', type: 'string'},{ arg: 'date', type: 'string'}],
-        http: { path:"/project/:project_id/account/:account_id/efficiency/", verb: "get", errorStatus: 401,},
+        accepts: [{ arg: 'account_id', type: 'string'},{ arg: 'date', type: 'date'}],
+        http: { path:"/date/:date/account/:account_id/efficiency/", verb: "get", errorStatus: 401,},
         description: ["an account's efficiency for every project."],
         returns: {arg: "efficiency", type: "decimal"}
     })
