@@ -2,6 +2,7 @@
 var app = require('../../server/server');
 
 module.exports = function(Report) {
+
     Report.status = function(cb) {
         var currentDate = new Date();
         var currentHour = currentDate.getHours();
@@ -46,36 +47,10 @@ module.exports = function(Report) {
   Report.remoteMethod("countAssignment",
     {
         accepts: [{ arg: 'accountId', type: 'string'}],
-        http: { path:"/:account_id/count", verb: "get", errorStatus: 401,},
-        description: ["Get number of assignments every Account"],
+        http: { path:"/account/:account_id/assignments/count", verb: "get", errorStatus: 401,},
+        description: ["Mengambil jumlah assignments setiap akun"],
         returns: {arg: "count", type: "number"}
   })
-
-    Report.getProject = function(task_id,cb){
-       app.models.Project.findOne({
-           include:{
-                relation: 'tasks', // include the owner object
-                scope: { // further filter the owner object
-                    where: {id: task_id}
-                }
-           }
-        },function(err, project){
-        if(err || task_id === 0)
-            return cb(err);
-        else {
-            console.log(project);
-            cb(null, project);
-        }
-        }) 
-    };
-
-    Report.remoteMethod("getProject",
-    {
-        accepts: [{ arg: 'task_id', type: 'string'}],
-        http: { path:"/:task_id/project", verb: "get", errorStatus: 401,},
-        description: ["Get get project."],
-        returns: {arg: "Project", type: "array"}
-    })
 
     Report.getProjectbyUser = function(account_id,cb){
         app.models.Project.find({
@@ -88,12 +63,12 @@ module.exports = function(Report) {
                     }
                 }
            }
-        },function(err, project){
+        },function(err, projects){
         if(err || account_id === 0)
             return cb(err);
         else {
-            console.log(project);
-            cb(null, project);
+            console.log(projects);
+            cb(null, projects);
         }
         }) 
     };
@@ -101,9 +76,9 @@ module.exports = function(Report) {
     Report.remoteMethod("getProjectbyUser",
     {
         accepts: [{ arg: 'account_id', type: 'string'}],
-        http: { path:"/:account_id/project", verb: "get", errorStatus: 401,},
-        description: ["Count project(s) which an account is involved in."],
-        returns: {arg: "Project", type: "array"}
+        http: { path:"/account/:account_id/projects", verb: "get", errorStatus: 401,},
+        description: ["Mengambil project dari setiap akun."],
+        returns: {arg: "Projects", type: "array"}
     })
 
     Report.countClosedAccountbyUser = function(account_id,cb){
@@ -120,8 +95,8 @@ module.exports = function(Report) {
     Report.remoteMethod("countClosedAccountbyUser",
     {
         accepts: [{ arg: 'account_id', type: 'string'}],
-        http: { path:"/:account_id/count/closed/assigments", verb: "get", errorStatus: 401,},
-        description: ["Count an account's closed assignments."],
+        http: { path:"/account/:account_id/assigments/closed/", verb: "get", errorStatus: 401,},
+        description: ["Menghitung assignment yang telah closed dari setiap akun."],
         returns: {arg: "count", type: "number"}
     })
 
@@ -143,8 +118,8 @@ module.exports = function(Report) {
     Report.remoteMethod("getElapsedbyUser",
     {
         accepts: [{ arg: 'account_id', type: 'string'}],
-        http: { path:"/:account_id/elapsed/assigments", verb: "get", errorStatus: 401,},
-        description: ["an account's all assignment elapsed time."],
+        http: { path:"/account/:account_id/assignments/elapsed/", verb: "get", errorStatus: 401,},
+        description: ["Mengambil total elapsed time dari setiap akun."],
         returns: {arg: "total", type: "decimal"}
     })
 
@@ -168,8 +143,8 @@ module.exports = function(Report) {
     Report.remoteMethod("getElapsedbyUserInProject",
     {
         accepts: [{ arg: 'project_id', type: 'string'},{ arg: 'account_id', type: 'string'}],
-        http: { path:"/project/:project_id/account/:account_id/elapsed", verb: "get", errorStatus: 401,},
-        description: ["an account's elapsed time for every project."],
+        http: { path:"/account/:account_id/project/:project_id/elapsed", verb: "get", errorStatus: 401,},
+        description: ["Mengambil elapsed time setiap akun berdasarkan project."],
         returns: {arg: "total", type: "decimal"}
     })
 
@@ -201,11 +176,11 @@ module.exports = function(Report) {
     Report.remoteMethod("getEfficiencybyUserInProject",
     {
         accepts: [{ arg: 'project_id', type: 'string'},{ arg: 'account_id', type: 'string'}],
-        http: { path:"/project/:project_id/account/:account_id/efficiency/", verb: "get", errorStatus: 401,},
-        description: ["an account's efficiency for every project."],
+        http: { path:"/account/:account_id/project/:project_id/efficiency/", verb: "get", errorStatus: 401,},
+        description: ["Mengambil efisiensi setiap akun berdasarkan project."],
         returns: {arg: "efficiency", type: "decimal"}
     })
-
+//fungsi get belum bisa
     Report.getEfficiencyPerDate = function(account_id,date,cb){
         var date_ = new Date(date);
         date_.setHours(0,0,0,0);
@@ -237,8 +212,8 @@ module.exports = function(Report) {
     Report.remoteMethod("getEfficiencyPerDate",
     {
         accepts: [{ arg: 'account_id', type: 'string'},{ arg: 'date', type: 'date'}],
-        http: { path:"/date/:date/account/:account_id/efficiency/", verb: "get", errorStatus: 401,},
-        description: ["an account's efficiency per date."],
+        http: { path:"/account/:account_id/:date/efficiency/", verb: "get", errorStatus: 401,},
+        description: ["Total efisiensi per akun berdasarkan tanggal."],
         returns: {arg: "efficiency", type: "decimal"}
     })
 
