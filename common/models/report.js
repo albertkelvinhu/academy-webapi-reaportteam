@@ -238,16 +238,9 @@ module.exports = function(Report) {
     {
         accepts: [{ arg: 'account_id', type: 'string'},{ arg: 'date', type: 'date'}],
         http: { path:"/date/:date/account/:account_id/efficiency/", verb: "get", errorStatus: 401,},
-        description: ["an account's efficiency for every project."],
+        description: ["an account's efficiency per date."],
         returns: {arg: "efficiency", type: "decimal"}
     })
-
-    
-
-
-
-
-
 
 //   Report.getAccountTasks = function(account_id,cb){
 //         app.models.Task.find({where: {AssignmentaccountId: account_id}},function(err, Tasks){
