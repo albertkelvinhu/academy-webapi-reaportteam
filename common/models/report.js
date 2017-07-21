@@ -209,11 +209,37 @@ module.exports = function(Report) {
         description: ["Mengambil efisiensi setiap akun berdasarkan project."],
         returns: {arg: "efficiency", type: "decimal"}
     })
+
+    Report.getEfficiencyInAllAssignments = function(account_id,cb){
+        app.models.Assignment.find({where: {accountId: account_id}},function(err, assignments){
+        if(err || account_id === 0)
+            return cb(err);
+        else {
+            console.log(assignments)
+            var sumElapsed = assignments.reduce(function(last, d) {
+                return d.elapsed + last;
+            }, 0);
+            var sumBudget = assignments.reduce(function(last, d) {
+                return d.budget + last;
+            }, 0);
+            var efficiency = (sumElapsed/sumBudget)*100 ;
+            cb(null, efficiency);
+        }
+        }) 
+    };
+
+    Report.remoteMethod("getEfficiencyInAllAssignments",
+    {
+        accepts: [{ arg: 'account_id', type: 'string'}],
+        http: { path:"/account/:account_id/assignments/efficiency/", verb: "get", errorStatus: 401,},
+        description: ["Mengambil efisiensi setiap akun pada semua assignments."],
+        returns: {arg: "efficiency", type: "decimal"}
+    })
 //fungsi get belum bisa
     Report.getEfficiencyPerDate = function(account_id,date,cb){
         var date_ = new Date(date);
         date_.setHours(0,0,0,0);
-        app.models.Assignment.find({where:{accountId: account_id}},function(err, assignments){
+        app.models.Assignment.find ({where:{accountId: account_id}},function(err, assignments){
         if(err || account_id === 0)
             return cb(err);
         else {
