@@ -183,7 +183,6 @@ module.exports = function(Report) {
             return cb(err);
         else {
             console.log(assignments)
-            
             var sumElapsed = assignments.reduce(function(last, d) {
                 if (d.projectId===project_id){
                     console.log(d.projectId)
@@ -197,7 +196,7 @@ module.exports = function(Report) {
                 }
             }, 0);
             var efficiency = (sumElapsed/sumBudget)*100 ;
-            cb(null, efficiency);
+            cb(null, getEfficiency);
         }
         }) 
     };
@@ -207,7 +206,7 @@ module.exports = function(Report) {
         accepts: [{ arg: 'project_id', type: 'string'},{ arg: 'account_id', type: 'string'}],
         http: { path:"/account/:account_id/project/:project_id/efficiency/", verb: "get", errorStatus: 401,},
         description: ["Mengambil efisiensi setiap akun berdasarkan project."],
-        returns: {arg: "efficiency", type: "decimal"}
+        returns: {arg: "efficiency", type: "array"}
     })
 
     Report.getEfficiencyInAllAssignments = function(account_id,cb){
@@ -215,6 +214,9 @@ module.exports = function(Report) {
         if(err || account_id === 0)
             return cb(err);
         else {
+            var getEfficiency=[];
+            var efficiency;
+
             console.log(assignments)
             var sumElapsed = assignments.reduce(function(last, d) {
                 return d.elapsed + last;
@@ -222,8 +224,12 @@ module.exports = function(Report) {
             var sumBudget = assignments.reduce(function(last, d) {
                 return d.budget + last;
             }, 0);
-            var efficiency = (sumElapsed/sumBudget)*100 ;
-            cb(null, efficiency);
+            efficiency = ((sumElapsed/sumBudget)*100).toFixed(2);
+        
+            getEfficiency.push(sumElapsed);
+            getEfficiency.push(sumBudget);
+            getEfficiency.push(efficiency);
+            cb(null, getEfficiency);
         }
         }) 
     };
@@ -233,7 +239,7 @@ module.exports = function(Report) {
         accepts: [{ arg: 'account_id', type: 'string'}],
         http: { path:"/account/:account_id/assignments/efficiency/", verb: "get", errorStatus: 401,},
         description: ["Mengambil efisiensi setiap akun pada semua assignments."],
-        returns: {arg: "efficiency", type: "decimal"}
+        returns: {arg: "efficiency", type: "object"}
     })
 //fungsi get belum bisa
     Report.getEfficiencyPerDate = function(account_id,date,cb){
@@ -255,7 +261,6 @@ module.exports = function(Report) {
         }
         }) 
     };
-
     Report.remoteMethod("getEfficiencyPerDate",
     {
         accepts: [{ arg: 'account_id', type: 'string'},{ arg: 'date', type: 'date'}],
@@ -263,27 +268,6 @@ module.exports = function(Report) {
         description: ["Total efisiensi per akun berdasarkan tanggal."],
         returns: {arg: "efficiency", type: "decimal"}
     })
-
-//   Report.getAccountTasks = function(account_id,cb){
-//         app.models.Task.find({where: {AssignmentaccountId: account_id}},function(err, Tasks){
-//         if(err || account_id === 0)
-//             return cb(err);
-//         else {
-//             console.log(projects);
-//             cb(null, projects);
-//         }
-//         })
-//     };
-
-
-//   Report.remoteMethod("getAccountTasks",
-//     {
-//         accepts: [{ arg: 'accountId', type: 'string'}],
-//         http: { path:"/:account_id/projects", verb: "get", errorStatus: 401,},
-//         description: ["Get projects every Account"],
-//         returns: {arg: "Tasks", type: "array"}
-//   })
-
 };
 
  
