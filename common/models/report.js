@@ -82,14 +82,19 @@ module.exports = function(Report) {
   })
 
     Report.getProjectbyUser = function(account_id,cb){
-        app.models.Project.find({
+        app.models.Project.find({ 
            include:{
                 relation: 'tasks', // include the owner object
-                scope: { // further filter the owner object
+                scope: 
+                {
+                    include:
+                    { 
                     relation: 'assignments', // include the owner object
-                    scope: { // further filter the owner object
+                    scope: 
+                        { // further filter the owner object
                         where: {accountId: account_id}
-                    }
+                        }
+                    }    
                 }
            }
         },function(err, projects){
@@ -107,7 +112,7 @@ module.exports = function(Report) {
         accepts: [{ arg: 'account_id', type: 'string'}],
         http: { path:"/account/:account_id/projects", verb: "get", errorStatus: 401,},
         description: ["Mengambil project dari setiap akun."],
-        returns: {arg: "Projects", type: "array"}
+        returns: {arg: "Projects", type: "object"}
     })
 
     Report.countClosedAccountbyUser = function(account_id,cb){
@@ -196,7 +201,7 @@ module.exports = function(Report) {
                 }
             }, 0);
             var efficiency = (sumElapsed/sumBudget)*100 ;
-            cb(null, getEfficiency);
+            cb(null, efficiency);
         }
         }) 
     };
@@ -242,10 +247,23 @@ module.exports = function(Report) {
         returns: {arg: "efficiency", type: "object"}
     })
 //fungsi get belum bisa
-    Report.getEfficiencyPerDate = function(account_id,date,cb){
-        var date_ = new Date(date);
-        date_.setHours(0,0,0,0);
-        app.models.Assignment.find ({where:{accountId: account_id}},function(err, assignments){
+    Report.getEfficiencyPerDate = function(account_id,date_start,date_end,cb){
+
+        var start_time = new Date(date_start);
+        
+        console.log(start_time);
+        var end_time = new Date(date_end);
+        console.log(date_end);
+
+        start_time.toUTCString();
+        console.log(start_time);
+        end_time.toUTCString();
+        console.log(date_end);
+        app.models.Assignment.find ({where:{accountId: account_id,
+            date:{
+                between: [start_time, end_time]
+            }}},
+            function(err, assignments){
         if(err || account_id === 0)
             return cb(err);
         else {
@@ -263,7 +281,7 @@ module.exports = function(Report) {
     };
     Report.remoteMethod("getEfficiencyPerDate",
     {
-        accepts: [{ arg: 'account_id', type: 'string'},{ arg: 'date', type: 'date'}],
+        accepts: [{ arg: 'account_id', type: 'string'},{ arg: 'date_start', type: 'date'},{ arg: 'date_end', type: 'date'}],
         http: { path:"/account/:account_id/:date/efficiency/", verb: "get", errorStatus: 401,},
         description: ["Total efisiensi per akun berdasarkan tanggal."],
         returns: {arg: "efficiency", type: "decimal"}
