@@ -250,7 +250,7 @@ module.exports = function(Report) {
     Report.getEfficiencyPerDate = function(account_id,date_start,date_end,cb){
 
         var start_time = new Date(date_start);
-        
+
         console.log(start_time);
         var end_time = new Date(date_end);
         console.log(date_end);
@@ -285,6 +285,38 @@ module.exports = function(Report) {
         http: { path:"/account/:account_id/:date/efficiency/", verb: "get", errorStatus: 401,},
         description: ["Total efisiensi per akun berdasarkan tanggal."],
         returns: {arg: "efficiency", type: "decimal"}
+    })
+
+    Report.getAssignmentsPerDate = function(account_id,date_start,date_end,cb){
+
+        var start_time = new Date(date_start);
+        
+        console.log(start_time);
+        var end_time = new Date(date_end);
+        console.log(date_end);
+
+        start_time.toUTCString();
+        console.log(start_time);
+        end_time.toUTCString();
+        console.log(date_end);
+        app.models.Assignment.find ({where:{accountId: account_id,
+            date:{
+                between: [start_time, end_time]
+            }}},
+            function(err, assignments){
+        if(err || account_id === 0)
+            return cb(err);
+        else {
+            cb(null, assignments);
+        }
+        }) 
+    };
+    Report.remoteMethod("getAssignmentsPerDate",
+    {
+        accepts: [{ arg: 'account_id', type: 'string'},{ arg: 'date_start', type: 'date'},{ arg: 'date_end', type: 'date'}],
+        http: { path:"/account/:account_id/:date/assignments/", verb: "get", errorStatus: 401,},
+        description: ["Total Assignment per akun berdasarkan tanggal."],
+        returns: {arg: "Assignments", type: "Object"}
     })
 };
 
