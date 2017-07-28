@@ -46,7 +46,6 @@ module.exports = function(Report) {
         if(err || account_id === 0)
             return cb(err);
         else {
-            console.log("dipanggil loh assignmnentsnya");
             cb(null, assignments);
         }
         })
@@ -61,16 +60,6 @@ module.exports = function(Report) {
             returns: {arg: "Assignments", type: "object"}
     })
     
-    Report.countAssignment = function(account_id,cb){
-        app.models.Assignment.count({accountId: account_id},function(err, count){
-        if(err || account_id === 0)
-            return cb(err);
-        else {
-            console.log(count);
-            cb(null, count);
-        }
-        })
-    };
 
     //get open assignment
     Report.getAssignmentsOpenIncludeTask = function(account_id,cb){
@@ -89,7 +78,6 @@ module.exports = function(Report) {
         if(err || account_id === 0)
             return cb(err);
         else {
-            console.log("dipanggil loh assignmnentsnya");
             cb(null, assignments);
         }
         })
@@ -109,10 +97,10 @@ module.exports = function(Report) {
         app.models.Assignment.find(
             {
                 where:
-                {
-                accountId: account_id,
-                status :"closed"
-
+                { and: 
+                       [{accountId: account_id},
+                       {status: "closed"}]
+                
             },
             include:{
                 relation: 'task'
@@ -121,7 +109,6 @@ module.exports = function(Report) {
         if(err || account_id === 0)
             return cb(err);
         else {
-            console.log("dipanggil loh assignmnentsnya");
             cb(null, assignments);
         }
         })
@@ -133,7 +120,7 @@ module.exports = function(Report) {
             accepts: [{ arg: 'accountId', type: 'string'}],
             http: { path:"/account/:account_id/assignments/get/closed", verb: "get", errorStatus: 401,},
             description: ["Mengambil assignments yang berstatus closed termasuk task setiap akun"],
-            returns: {arg: "Assignments", type: "object"}
+            returns: {arg: "Assignments", type: "array",root:true}
     })
     
     Report.countAssignment = function(account_id,cb){
@@ -141,7 +128,6 @@ module.exports = function(Report) {
         if(err || account_id === 0)
             return cb(err);
         else {
-            console.log(count);
             cb(null, count);
         }
         })
@@ -155,85 +141,11 @@ module.exports = function(Report) {
         returns: {arg: "count", type: "object",root:true}
   })
 
-    // Report.getProjectbyUser = function(account_id,cb){
-    //     var projectsArr =[];
-    //     app.models.Project.find({ 
-    //        include:
-    //        {
-    //             relation: 'tasks', // include the owner object
-    //             scope: 
-    //             {
-    //                 include:
-    //                 { 
-    //                 relation: 'assignments', // include the owner object
-    //                 scope: 
-    //                     { // further filter the owner object
-    //                     where: {
-    //                         accountId: account_id
-    //                         }
-    //                     }
-    //                 }    
-    //             }
-    //        }
-    //     },function(err, projects){
-    //     if(err || account_id === 0)
-    //         return cb(err);
-    //     else {
-    //         cb(null, projects);
-    //     }
-    //     }) 
-    // };
-
-    // Report.remoteMethod("getProjectbyUser",
-    // {
-    //     accepts: [{ arg: 'account_id', type: 'string'}],
-    //     http: { path:"/account/:account_id/projects", verb: "get", errorStatus: 401,},
-    //     description: ["Mengambil project dari setiap akun."],
-    //     returns: {arg: "Projects", type: "array",root:true}
-    // })
-
-    // Report.countProjectbyUser = function(account_id,cb){
-    //     var projectsArr =[];
-    //     app.models.Project.find({ 
-    //        include:{
-    //             relation: 'tasks', // include the owner object
-    //             scope: 
-    //             {
-    //                 include:
-    //                 { 
-    //                 relation: 'assignments', // include the owner object
-    //                 scope: 
-    //                     { // further filter the owner object
-    //                     where: {
-    //                         accountId: account_id
-    //                         }
-    //                     }
-    //                 }    
-    //             }
-    //        }
-    //     },function(err, projects){
-    //     if(err || account_id === 0)
-    //         return cb(err);
-    //     else {
-    //         cb(null, projects);
-    //     }
-    //     }) 
-    // };
-
-    // Report.remoteMethod("countProjectbyUser",
-    // {
-    //     accepts: [{ arg: 'account_id', type: 'string'}],
-    //     http: { path:"/account/:account_id/projects/count", verb: "get", errorStatus: 401,},
-    //     description: ["Count project dari setiap akun."],
-    //     returns: {arg: "Count", type: "object",root:true}
-    // })
-
     Report.countClosedAssignmentbyUser = function(account_id,cb){
         app.models.Assignment.count({accountId: account_id,status: "closed"},function(err, count){
         if(err || account_id === 0)
             return cb(err);
         else {
-            console.log(count);
             cb(null, count);
         }
         }) 
@@ -242,7 +154,7 @@ module.exports = function(Report) {
     Report.remoteMethod("countClosedAssignmentbyUser",
     {
         accepts: [{ arg: 'account_id', type: 'string'}],
-        http: { path:"/account/:account_id/assigments/closed/", verb: "get", errorStatus: 401,},
+        http: { path:"/account/:account_id/assignments/closed/", verb: "get", errorStatus: 401,},
         description: ["Menghitung assignment yang telah closed dari setiap akun."],
         returns: {arg: "count", type: "object",root:true}
     })
@@ -253,7 +165,8 @@ module.exports = function(Report) {
         if(err || account_id === 0)
             return cb(err);
         else {
-            console.log(count);
+            console.log()
+            console.log("ini yang open lohh " +count);
             cb(null, count);
         }
         }) 
@@ -262,7 +175,7 @@ module.exports = function(Report) {
     Report.remoteMethod("countOpenAssignmentbyUser",
     {
         accepts: [{ arg: 'account_id', type: 'string'}],
-        http: { path:"/account/:account_id/assigments/open/", verb: "get", errorStatus: 401,},
+        http: { path:"/account/:account_id/assignments/open/", verb: "get", errorStatus: 401,},
         description: ["Menghitung assignment yang telah open dari setiap akun."],
         returns: {arg: "count", type: "object",root:true}
     })
@@ -273,7 +186,6 @@ module.exports = function(Report) {
         if(err || account_id === 0)
             return cb(err);
         else {
-            console.log(assignments);
             var sum = assignments.reduce(function(last, d) {
                 return d.elapsed + last;
             }, 0);
@@ -295,7 +207,6 @@ module.exports = function(Report) {
         if(err || account_id === 0)
             return cb(err);
         else {
-            console.log(assignments);
             var sum = assignments.reduce(function(last, d) {
                 return d.budget + last;
             }, 0);
@@ -310,65 +221,7 @@ module.exports = function(Report) {
         http: { path:"/account/:account_id/assignments/budget/", verb: "get", errorStatus: 401,},
         description: ["Mengambil total budget time dari setiap akun."],
         returns: {arg: "total", type: "object", root:true}
-    })    
-
-
-    Report.getElapsedbyUserInProject = function(account_id,project_id,cb){
-        app.models.Assignment.find({where: {and: [{accountId: account_id}]}},function(err, assignments){
-        if(err || account_id === 0)
-            return cb(err);
-        else {
-            var sumElapsed = assignments.reduce(function(last, d) {
-                if (d.projectId===project_id){
-                    console.log(d.projectId)
-                    return d.elapsed + last;
-                }
-            }, 0);
-            cb(null, sumElapsed);
-        }
-        }) 
-    };
-
-    Report.remoteMethod("getElapsedbyUserInProject",
-    {
-        accepts: [{ arg: 'project_id', type: 'string'},{ arg: 'account_id', type: 'string'}],
-        http: { path:"/account/:account_id/project/:project_id/elapsed", verb: "get", errorStatus: 401,},
-        description: ["Mengambil elapsed time setiap akun berdasarkan project."],
-        returns: {arg: "total", type: "object",root:true}
-    })
-
-    //belum selesai
-    Report.getEfficiencybyUserInProject = function(project_id,account_id,cb){
-        app.models.Assignment.find({where: {accountId: account_id}},function(err, assignments){
-        if(err || account_id === 0)
-            return cb(err);
-        else {
-            console.log(assignments)
-            var sumElapsed = assignments.reduce(function(last, d) {
-                if (d.projectId===project_id){
-                    console.log(d.projectId)
-                    return d.elapsed + last;
-                }
-            }, 0);
-            var sumBudget = assignments.reduce(function(last, d) {
-                if (d.projectId===project_id){
-                    console.log(d.projectId)
-                    return d.budget + last;
-                }
-            }, 0);
-            var efficiency = (sumElapsed/sumBudget)*100 ;
-            cb(null, efficiency);
-        }
-        }) 
-    };
-
-    Report.remoteMethod("getEfficiencybyUserInProject",
-    {
-        accepts: [{ arg: 'project_id', type: 'string'},{ arg: 'account_id', type: 'string'}],
-        http: { path:"/account/:account_id/project/:project_id/efficiency/", verb: "get", errorStatus: 401,},
-        description: ["Mengambil efisiensi setiap akun berdasarkan project."],
-        returns: {arg: "efficiency", type: "array",root:true}
-    })
+    }) 
 
     //
     Report.getEfficiencyInAllAssignments = function(account_id,cb){
@@ -378,14 +231,15 @@ module.exports = function(Report) {
         else {
             var efficiency;
             var getData=[];
-            console.log(assignments)
             var sumElapsed = assignments.reduce(function(last, d) {
                 return d.elapsed + last;
             }, 0);
             var sumBudget = assignments.reduce(function(last, d) {
                 return d.budget + last;
             }, 0);
-            efficiency = ((sumBudget/sumElapsed)*100).toFixed(2);
+            if(sumBudget!=0&&sumElapsed!=0){
+                efficiency = ((sumBudget/sumElapsed)*100).toFixed(2);
+            }
             cb(null, efficiency);
         }
         }) 
@@ -399,10 +253,7 @@ module.exports = function(Report) {
         returns: {arg: "efficiency", type: "object",root:true}
     })
 
-    //sekarang kita berada dari sini kebawahhh                                              
-
     Report.getEfficiencyPerDate = function(account_id,date_start,date_end,cb){
-
         var start_time = new Date(date_start);
         var end_time = new Date(date_end);
         start_time=start_time.toUTCString();
@@ -417,7 +268,6 @@ module.exports = function(Report) {
             return cb(err);
         else {
             var efficiencyData = [];
-            console.log(assignments)
             var sumElapsed = assignments.reduce(function(last, d) {
                 return d.elapsed + last;
             }, 0);
@@ -438,14 +288,17 @@ module.exports = function(Report) {
     })
 
     Report.getAssignmentsPerDate = function(account_id,date_start,date_end,cb){
-        console.log(date_start)
         var start_time = new Date(date_start);
         var end_time = new Date(date_end);
 
         start_time=start_time.toUTCString();
         end_time=end_time.toUTCString();
 
-        app.models.Assignment.find ({include: 'task',where:{accountId: account_id,
+        app.models.Assignment.find (
+            {
+                include: 'task',
+                where:
+                {accountId: account_id,
             date:{
                 between: [start_time, end_time]
             }}},
@@ -464,6 +317,137 @@ module.exports = function(Report) {
         description: ["Total Assignment per akun berdasarkan tanggal."],
         returns: {arg: "Assignments", type: "array",root: true}
     })
+    
+    //kalau dipanggil ke aurelia ga bekerja dengan baik
+    Report.getClosedAssignmentsPerDate = function(account_id,date_start,date_end,cb){
+        var start_time = new Date(date_start);
+        var end_time = new Date(date_end);
+
+        start_time=start_time.toUTCString();
+        end_time=end_time.toUTCString();
+
+        app.models.Assignment.find (
+            {
+                include: 'task',
+                where:{
+                    and:
+                    [
+                        {accountId: account_id},
+                        {date:{
+                            between: [start_time, end_time]}},
+                        {  status: "closed"}
+                    ]
+                }
+                },
+            function(err, assignments){
+        if(err || account_id === 0)
+            return cb(err);
+        else {
+            cb(null, assignments);
+        }
+        }) 
+    };
+    Report.remoteMethod("getAssignmentsPerDate",
+    {
+        accepts: [{ arg: 'account_id', type: 'string'},{ arg: 'date_start', type: 'string'},{ arg: 'date_end', type: 'string'}],
+        http: { path:"/account/:account_id/:date_start/to/:date_end/assignments/closed", verb: "get", errorStatus: 401,},
+        description: ["Closed Assignment per akun berdasarkan tanggal."],
+        returns: {arg: "Assignments", type: "array",root: true}
+    })
+
+    //kalau dipanggil ke aurelia ga bekerja dengan baik
+    Report.getOpenAssignmentsPerDate = function(account_id,date_start,date_end,cb){
+        var start_time = new Date(date_start);
+        var end_time = new Date(date_end);
+
+        start_time=start_time.toUTCString();
+        end_time=end_time.toUTCString();
+
+        app.models.Assignment.find (
+            {
+                include: 'task',
+                where:
+                {accountId: account_id,
+            date:{
+                between: [start_time, end_time],
+                status: 'open'
+            }}},
+            function(err, assignments){
+        if(err || account_id === 0)
+            return cb(err);
+        else {
+            cb(null, assignments);
+        }
+        }) 
+    };
+    Report.remoteMethod("getAssignmentsPerDate",
+    {
+        accepts: [{ arg: 'account_id', type: 'string'},{ arg: 'date_start', type: 'string'},{ arg: 'date_end', type: 'string'}],
+        http: { path:"/account/:account_id/:date_start/to/:date_end/assignments/open", verb: "get", errorStatus: 401,},
+        description: ["Open Assignment per akun berdasarkan tanggal."],
+        returns: {arg: "Assignments", type: "array",root: true}
+    })
+
+    
+
+    //sekarang kita berada dari sini kebawahhh        
+    
+    // Report.GetProjectperAccount = function(account_id,cb){
+    //     app.models.Assignment.find({where: {accountId: account_id}},function(err, assignments){
+    //     if(err || account_id === 0)
+    //         return cb(err);
+    //     else {
+    //         var projects = assignments.reduce(function(last, d) {
+    //             if (d.projectId===project_id){
+    //                 console.log(d.projectId)
+    //                 return d.elapsed + last;
+    //             }
+    //         }, 0);
+            
+    //         cb(null, projects);
+    //     }
+    //     }) 
+    // };
+
+    // Report.remoteMethod("getEfficiencybyUserInProject",
+    // {
+    //     accepts: [{ arg: 'project_id', type: 'string'},{ arg: 'account_id', type: 'string'}],
+    //     http: { path:"/account/:account_id/project/:project_id/efficiency/", verb: "get", errorStatus: 401,},
+    //     description: ["Mengambil efisiensi setiap akun berdasarkan project."],
+    //     returns: {arg: "efficiency", type: "array",root:true}
+    // })
+
+    
+    //belum selesai
+    Report.getEfficiencybyUserInProject = function(project_id,account_id,cb){
+        app.models.Assignment.find({where: {accountId: account_id}},function(err, assignments){
+        if(err || account_id === 0)
+            return cb(err);
+        else {
+            var sumElapsed = assignments.reduce(function(last, d) {
+                if (d.projectId===project_id){
+                    return d.elapsed + last;
+                }
+            }, 0);
+            var sumBudget = assignments.reduce(function(last, d) {
+                if (d.projectId===project_id){
+                    return d.budget + last;
+                }
+            }, 0);
+            var efficiency = (sumElapsed/sumBudget)*100 ;
+            cb(null, efficiency);
+        }
+        }) 
+    };
+
+    Report.remoteMethod("getEfficiencybyUserInProject",
+    {
+        accepts: [{ arg: 'project_id', type: 'string'},{ arg: 'account_id', type: 'string'}],
+        http: { path:"/account/:account_id/project/:project_id/efficiency/", verb: "get", errorStatus: 401,},
+        description: ["Mengambil efisiensi setiap akun berdasarkan project."],
+        returns: {arg: "efficiency", type: "array",root:true}
+    })
+
 };
 
  
